@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page { size: A4; margin: 0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Helvetica, Arial, sans-serif; color: #1a1a1a; font-size: 10pt; line-height: 1.5; }
+        .resume-header { padding: 36px 40px; color: white; }
+        .resume-header h1 { font-size: 26pt; font-weight: bold; margin-bottom: 8px; }
+        .contact-info { font-size: 9pt; }
+        .contact-info span { display: inline; margin-right: 12px; }
+        .resume-body { padding: 28px 40px 40px; }
+        .section-title { font-size: 10pt; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; padding-bottom: 5px; border-bottom-width: 2px; border-bottom-style: solid; }
+        .section { margin-bottom: 20px; }
+        .experience-item { margin-bottom: 14px; }
+        .experience-item h4 { font-size: 11pt; font-weight: bold; color: #1a1a1a; }
+        .experience-item .company { font-size: 9.5pt; font-weight: bold; }
+        .experience-item .date { font-size: 8.5pt; color: #888; margin-bottom: 4px; }
+        .experience-item p { font-size: 9pt; color: #444; line-height: 1.6; }
+        .skills-grid { font-size: 9pt; }
+        .skill-tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 8.5pt; font-weight: bold; margin: 0 4px 4px 0; }
+
+        .modern .resume-header { background-color: #5a8a6a; }
+        .modern .section-title { color: #5a8a6a; border-bottom-color: #5a8a6a; }
+        .modern .company { color: #5a8a6a; }
+        .modern .skill-tag { background-color: #eef5f0; color: #4a7a5a; }
+
+        .classic .resume-header { text-align: center; background-color: white; color: #1a1a1a; border-bottom: 3px double #333; }
+        .classic .resume-header h1 { font-size: 28pt; }
+        .classic .contact-info { color: #666; text-align: center; }
+        .classic .section-title { color: #1a1a1a; border-bottom-color: #ddd; }
+        .classic .company { color: #555; }
+        .classic .skill-tag { background-color: #f1f5f2; color: #475569; }
+
+        .creative .resume-header { background-color: #c4a35a; }
+        .creative .section-title { color: #c4a35a; border-bottom-color: #c4a35a; }
+        .creative .company { color: #c4a35a; }
+        .creative .skill-tag { background-color: #faf5eb; color: #a88a4a; }
+
+        .minimal .resume-header { background-color: #2c3e2c; }
+        .minimal .section-title { color: #334155; border-bottom-color: #334155; }
+        .minimal .company { color: #555; }
+        .minimal .skill-tag { background-color: #f1f5f2; color: #475569; }
+
+        .executive .resume-header { background-color: #3a4f3a; }
+        .executive .section-title { color: #3a4f3a; border-bottom-color: #3a4f3a; }
+        .executive .company { color: #475569; }
+        .executive .skill-tag { background-color: #e2e8e0; color: #334155; }
+    </style>
+</head>
+<body>
+    <div class="{{ resume.template }}">
+        <div class="resume-header">
+            <h1>{{ resume.full_name|default:"Your Name" }}</h1>
+            <div class="contact-info">
+                {% if resume.email %}<span>{{ resume.email }}</span>{% endif %}
+                {% if resume.phone %}<span>{{ resume.phone }}</span>{% endif %}
+                {% if resume.location %}<span>{{ resume.location }}</span>{% endif %}
+                {% if resume.linkedin_url %}<span>{{ resume.linkedin_url }}</span>{% endif %}
+                {% if resume.portfolio_url %}<span>{{ resume.portfolio_url }}</span>{% endif %}
+            </div>
+        </div>
+        <div class="resume-body">
+            {% if resume.professional_summary %}
+            <div class="section">
+                <h3 class="section-title">Professional Summary</h3>
+                <p>{{ resume.professional_summary }}</p>
+            </div>
+            {% endif %}
+            {% if experiences %}
+            <div class="section">
+                <h3 class="section-title">Work Experience</h3>
+                {% for exp in experiences %}
+                <div class="experience-item">
+                    <h4>{{ exp.job_title }}</h4>
+                    <div class="company">{{ exp.company }}{% if exp.location %} - {{ exp.location }}{% endif %}</div>
+                    <div class="date">{{ exp.start_date|date:"M Y" }} - {% if exp.is_current %}Present{% else %}{{ exp.end_date|date:"M Y" }}{% endif %}</div>
+                    {% if exp.description %}<p>{{ exp.description }}</p>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% if educations %}
+            <div class="section">
+                <h3 class="section-title">Education</h3>
+                {% for edu in educations %}
+                <div class="experience-item">
+                    <h4>{{ edu.degree }}</h4>
+                    <div class="company">{{ edu.institution }}{% if edu.location %} - {{ edu.location }}{% endif %}</div>
+                    <div class="date">{{ edu.start_date|date:"M Y" }} - {% if edu.end_date %}{{ edu.end_date|date:"M Y" }}{% else %}Present{% endif %}{% if edu.gpa %} | GPA: {{ edu.gpa }}{% endif %}</div>
+                    {% if edu.description %}<p>{{ edu.description }}</p>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% if skills %}
+            <div class="section">
+                <h3 class="section-title">Skills</h3>
+                <div class="skills-grid">
+                    {% for skill in skills %}
+                    <span class="skill-tag">{{ skill.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

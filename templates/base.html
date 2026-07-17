@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Wings AI Resume Builder{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{% url 'home' %}" class="navbar-brand">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/>
+                </svg>
+            </div>
+            <div class="brand-text">
+                <span class="brand-name">Wings</span>
+                <span class="brand-tagline">AI Resume Builder</span>
+            </div>
+        </a>
+        <ul class="navbar-nav">
+            <li><a href="{% url 'home' %}"><i class="fas fa-home" style="margin-right:4px;"></i> Home</a></li>
+            {% if user.is_authenticated %}
+            <li><a href="{% url 'my_resumes' %}"><i class="fas fa-file-alt" style="margin-right:4px;"></i> My Resumes</a></li>
+            {% endif %}
+            <li><a href="{% url 'advice' %}"><i class="fas fa-lightbulb" style="margin-right:4px;"></i> Advice</a></li>
+            <li><a href="{% url 'contact' %}"><i class="fas fa-envelope" style="margin-right:4px;"></i> Contact Us</a></li>
+            {% if user.is_authenticated %}
+            <li>
+                <a href="{% url 'create_resume' %}" class="btn btn-primary btn-sm" style="margin-left:4px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                    New Resume
+                </a>
+            </li>
+            <li style="position:relative;">
+                <a href="#" style="display:flex;align-items:center;gap:6px;">
+                    <span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.78rem;">{{ user.first_name|first|default:user.username|first|upper }}</span>
+                    {{ user.first_name|default:user.username }}
+                </a>
+            </li>
+            <li><a href="{% url 'logout' %}" style="color:var(--danger);">Logout</a></li>
+            {% else %}
+            <li><a href="{% url 'login' %}" style="color:var(--primary-dark);font-weight:600;">Login</a></li>
+            <li>
+                <a href="{% url 'register' %}" class="btn btn-primary btn-sm">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+                    Register Free
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    {% for message in messages %}
+    <div class="toast-message" data-message="{{ message }}" data-type="{{ message.tags }}"></div>
+    {% endfor %}
+
+    {% block content %}{% endblock %}
+
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

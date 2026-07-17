@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Resumes - Wings AI Resume Builder{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:2.5rem;padding-bottom:3rem;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:2rem;" class="animate-on-scroll">
+        <div>
+            <h1 style="font-size:1.8rem;font-weight:700;color:var(--gray-900);">My Resumes</h1>
+            <p style="font-size:0.9rem;color:var(--gray-500);">Manage and edit your resumes</p>
+        </div>
+        <a href="{% url 'create_resume' %}" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            Create New Resume
+        </a>
+    </div>
+
+    {% if resumes %}
+    <div class="resume-grid">
+        {% for resume in resumes %}
+        <div class="resume-card animate-on-scroll" style="animation-delay:{{ forloop.counter0 }}0.1s;">
+            <div class="card-top">
+                <span class="template-badge">{{ resume.get_template_display }}</span>
+                <div class="card-avatar">{{ resume.full_name|first|default:"?" }}</div>
+            </div>
+            <div class="card-content">
+                <h3>{{ resume.title }}</h3>
+                <p>{{ resume.full_name|default:"No name set" }} &middot; {{ resume.updated_at|date:"M d, Y" }}</p>
+            </div>
+            <div class="card-actions">
+                <a href="{% url 'edit_resume' resume.id %}" class="btn btn-primary btn-sm">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    Edit
+                </a>
+                <a href="{% url 'preview_resume' resume.id %}" class="btn btn-secondary btn-sm">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    Preview
+                </a>
+                <a href="{% url 'download_resume' resume.id %}" class="btn btn-success btn-sm">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                    PDF
+                </a>
+                <a href="{% url 'delete_resume' resume.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Delete this resume permanently?')">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align:center;padding:5rem 2rem;" class="animate-on-scroll">
+        <div style="width:100px;height:100px;background:var(--primary-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <h2 style="font-size:1.5rem;color:var(--gray-800);margin-bottom:0.5rem;">No resumes yet</h2>
+        <p style="color:var(--gray-500);margin-bottom:1.5rem;">Create your first AI-powered resume and land your dream job.</p>
+        <a href="{% url 'create_resume' %}" class="btn btn-primary btn-lg">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            Create Your First Resume
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

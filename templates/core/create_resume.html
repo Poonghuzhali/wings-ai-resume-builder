@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Resume - Wings AI Resume Builder{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 3rem;">
+    <div class="section-header animate-on-scroll">
+        <h2>Create Your Resume</h2>
+        <p>Start with your basic information, then let AI help you polish the rest</p>
+        <div class="accent-line"></div>
+    </div>
+
+    <form method="post" action="{% url 'create_resume' %}" style="max-width: 800px; margin: 0 auto;">
+        {% csrf_token %}
+
+        <div class="card animate-on-scroll animate-delay-1" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Resume Details
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Resume Title</label>
+                        <input type="text" name="title" placeholder="e.g., Senior Developer Resume" value="My Resume">
+                    </div>
+                    <div class="form-group">
+                        <label>Template Style</label>
+                        <select name="template" id="selected_template">
+                            <option value="modern">Modern</option>
+                            <option value="classic">Classic</option>
+                            <option value="creative">Creative</option>
+                            <option value="minimal">Minimal</option>
+                            <option value="executive">Executive</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card animate-on-scroll animate-delay-2" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    Personal Information
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" name="full_name" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address *</label>
+                        <input type="email" name="email" placeholder="john@example.com" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" name="phone" placeholder="+1 (555) 123-4567">
+                    </div>
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" name="location" placeholder="San Francisco, CA">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>LinkedIn URL</label>
+                        <input type="url" name="linkedin_url" placeholder="https://linkedin.com/in/johndoe">
+                    </div>
+                    <div class="form-group">
+                        <label>Portfolio URL</label>
+                        <input type="url" name="portfolio_url" placeholder="https://johndoe.dev">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Professional Summary</label>
+                    <textarea name="professional_summary" rows="4" placeholder="A brief professional summary about yourself... You can use AI to generate this later!"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end;" class="animate-on-scroll animate-delay-3">
+            <a href="{% url 'home' %}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary btn-lg">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
+                Create Resume
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
