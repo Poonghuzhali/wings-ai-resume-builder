@@ -24,6 +24,9 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 if RENDER_EXTERNAL_HOSTNAME:
     CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_EXTERNAL_HOSTNAME}')
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -66,19 +69,39 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'resume_builder.wsgi.application'
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default=(
-            f"postgres://{os.environ.get('DB_USER', 'postgres')}:"
-            f"{os.environ.get('DB_PASSWORD', '')}@"
-            f"{os.environ.get('DB_HOST', 'localhost')}:"
-            f"{os.environ.get('DB_PORT', '5432')}/"
-            f"{os.environ.get('DB_NAME', 'resume_builder_db')}"
-        ),
-        conn_max_age=600,
-        ssl_require=bool(os.environ.get('DATABASE_URL')),
-    )
-}
+DATABASE_URL = os.environ.get('DATABASE_URL')
+USE_SQLITE = os.environ.get('USE_SQLITE', '').lower() == 'true'
+
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True,
+        )
+    }
+elif USE_SQLITE:
+    DATA_DIR = BASE_DIR / 'data'
+    DATA_DIR.mkdir(exist_ok=True)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': DATA_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=(
+                f"postgres://{os.environ.get('DB_USER', 'postgres')}:"
+                f"{os.environ.get('DB_PASSWORD', '')}@"
+                f"{os.environ.get('DB_HOST', 'localhost')}:"
+                f"{os.environ.get('DB_PORT', '5432')}/"
+                f"{os.environ.get('DB_NAME', 'resume_builder_db')}"
+            ),
+            conn_max_age=600,
+        )
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -95,7 +118,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
