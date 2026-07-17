@@ -1,0 +1,26 @@
+databases:
+  - name: resume-builder-db
+    databaseName: resume_builder_db
+    user: resume_builder_user
+    plan: free
+
+services:
+  - type: web
+    name: wings-ai-resume-builder
+    runtime: python
+    plan: free
+    buildCommand: chmod +x build.sh && ./build.sh
+    startCommand: gunicorn resume_builder.wsgi
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.5
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: resume-builder-db
+          property: connectionString
+      - key: OPENAI_API_KEY
+        sync: false

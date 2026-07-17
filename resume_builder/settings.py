@@ -1,11 +1,29 @@
 import os
 from pathlib import Path
 
+import dj_database_url
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-1_04y8$$w*@lv3rgge7f)44tjg*z=+=lg%-7gr8g&kxspkxn@g')
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+    if host.strip()
+]
+
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME and RENDER_EXTERNAL_HOSTNAME not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
+    if origin.strip()
+]
+if RENDER_EXTERNAL_HOSTNAME:
+    CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_EXTERNAL_HOSTNAME}')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -49,14 +67,17 @@ TEMPLATES = [
 WSGI_APPLICATION = 'resume_builder.wsgi.application'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'resume_builder_db'),
-        'USER': os.environ.get('DB_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
-    }
+    'default': dj_database_url.config(
+        default=(
+            f"postgres://{os.environ.get('DB_USER', 'postgres')}:"
+            f"{os.environ.get('DB_PASSWORD', '')}@"
+            f"{os.environ.get('DB_HOST', 'localhost')}:"
+            f"{os.environ.get('DB_PORT', '5432')}/"
+            f"{os.environ.get('DB_NAME', 'resume_builder_db')}"
+        ),
+        conn_max_age=600,
+        ssl_require=bool(os.environ.get('DATABASE_URL')),
+    )
 }
 
 AUTH_PASSWORD_VALIDATORS = [
